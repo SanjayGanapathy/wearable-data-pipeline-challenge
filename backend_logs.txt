@@ -1,0 +1,233 @@
+time="2025-07-02T21:35:39-07:00" level=warning msg="/home/sanja/wearable-data-pipeline-challenge/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1]
+[Kbackend_app-1 exited with code 0
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1]
+[Kbackend_app-1 exited with code 0
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1]
+[Kbackend_app-1 exited with code 0
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1]
+[Kbackend_app-1 exited with code 0
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1]
+[Kbackend_app-1 exited with code 0
+[Kbackend_app-1 has been recreated
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+Backend: Querying data_1h for heart_rate from 2025-06-01 to 2025-06-30 for test_participant_1
+INFO:     172.18.0.1:38264 - "GET /data?start_date=2025-06-01&end_date=2025-06-30&user_id=test_participant_1&metric=heart_rate&limit=50&offset=0 HTTP/1.1" 200 OK
+Backend: Querying raw_data for heart_rate from 2025-06-01 to 2025-06-30 for test_participant_1
+INFO:     172.18.0.1:35198 - "GET /data/imputed?start_date=2025-06-01&end_date=2025-06-30&user_id=test_participant_1&metric=heart_rate&limit=50&offset=0 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 3812, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "pandas/_libs/index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7088, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7096, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'heart_rate'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/uvicorn/protocols/http/h11_impl.py", line 407, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/uvicorn/middleware/proxy_headers.py", line 78, in __call__
+    return await self.app(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/applications.py", line 289, in __call__
+    await super().__call__(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/routing.py", line 273, in app
+    raw_response = await run_endpoint_function(
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/routing.py", line 190, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/app/backend/app.py", line 248, in get_imputed_time_series_data
+    original_values = df[metric].copy()
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/pandas/core/frame.py", line 4107, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 3819, in get_loc
+    raise KeyError(key) from err
+KeyError: 'heart_rate'
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1]
+[Kbackend_app-1 exited with code 0
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+Backend: Querying data_1h for heart_rate from 2025-06-01 to 2025-06-30 for test_participant_1
+INFO:     172.18.0.1:56662 - "GET /data?start_date=2025-06-01&end_date=2025-06-30&user_id=test_participant_1&metric=heart_rate&limit=50&offset=0 HTTP/1.1" 200 OK
+/app/backend/app.py:271: FutureWarning: 'H' is deprecated and will be removed in a future version, please use 'h' instead.
+  full_index = pd.date_range(start=df.index.min(), end=df.index.max(), freq=freq)
+Backend: Querying raw_data for heart_rate from 2025-06-01 to 2025-06-30 for test_participant_1
+INFO:     172.18.0.1:56662 - "GET /data/imputed?start_date=2025-06-01&end_date=2025-06-30&user_id=test_participant_1&metric=heart_rate&limit=50&offset=0 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/uvicorn/protocols/http/h11_impl.py", line 407, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/uvicorn/middleware/proxy_headers.py", line 78, in __call__
+    return await self.app(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/applications.py", line 289, in __call__
+    await super().__call__(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/routing.py", line 273, in app
+    raw_response = await run_endpoint_function(
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/routing.py", line 190, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/app/backend/app.py", line 272, in get_imputed_time_series_data
+    df = df.reindex(full_index)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/pandas/core/frame.py", line 5385, in reindex
+    return super().reindex(
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/pandas/core/generic.py", line 5629, in reindex
+    return self._reindex_axes(
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/pandas/core/generic.py", line 5652, in _reindex_axes
+    new_index, indexer = ax.reindex(
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 4436, in reindex
+    raise ValueError("cannot reindex on an axis with duplicate labels")
+ValueError: cannot reindex on an axis with duplicate labels
+Backend: Querying data_1h for heart_rate from 2025-06-01 to 2025-06-30 for test_participant_1
+INFO:     172.18.0.1:41842 - "GET /data?start_date=2025-06-01&end_date=2025-06-30&user_id=test_participant_1&metric=heart_rate&limit=50&offset=0 HTTP/1.1" 200 OK
+Backend: Querying data_1h for heart_rate from 2025-06-01 to 2025-06-30 for test_participant_1
+INFO:     172.18.0.1:45934 - "GET /data?start_date=2025-06-01&end_date=2025-06-30&user_id=test_participant_1&metric=heart_rate&limit=50&offset=0 HTTP/1.1" 200 OK
+Backend: Querying data_1h for heart_rate from 2025-06-01 to 2025-06-30 for test_participant_1
+INFO:     172.18.0.1:36326 - "GET /data?start_date=2025-06-01&end_date=2025-06-30&user_id=test_participant_1&metric=heart_rate&limit=50&offset=0 HTTP/1.1" 200 OK
+/app/backend/app.py:271: FutureWarning: 'H' is deprecated and will be removed in a future version, please use 'h' instead.
+  full_index = pd.date_range(start=df.index.min(), end=df.index.max(), freq=freq)
+Backend: Querying raw_data for heart_rate from 2025-06-01 to 2025-06-30 for test_participant_1
+INFO:     172.18.0.1:36326 - "GET /data/imputed?start_date=2025-06-01&end_date=2025-06-30&user_id=test_participant_1&metric=heart_rate&limit=50&offset=0 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/uvicorn/protocols/http/h11_impl.py", line 407, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/uvicorn/middleware/proxy_headers.py", line 78, in __call__
+    return await self.app(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/applications.py", line 289, in __call__
+    await super().__call__(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/routing.py", line 273, in app
+    raw_response = await run_endpoint_function(
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/fastapi/routing.py", line 190, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/app/backend/app.py", line 272, in get_imputed_time_series_data
+    df = df.reindex(full_index)
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/pandas/core/frame.py", line 5385, in reindex
+    return super().reindex(
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/pandas/core/generic.py", line 5629, in reindex
+    return self._reindex_axes(
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/pandas/core/generic.py", line 5652, in _reindex_axes
+    new_index, indexer = ax.reindex(
+  File "/root/.cache/pypoetry/virtualenvs/wearipedia-WA19Aai0-py3.10/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 4436, in reindex
+    raise ValueError("cannot reindex on an axis with duplicate labels")
+ValueError: cannot reindex on an axis with duplicate labels
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1]
+[Kbackend_app-1 exited with code 0

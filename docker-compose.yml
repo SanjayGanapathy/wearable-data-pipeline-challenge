@@ -5,7 +5,7 @@ services:
     image: timescale/timescaledb:latest-pg15
     restart: always
     ports:
-      - "5433:5432"
+      - "5433:5432" # Host port 5433 mapped to container 5432 (TimescaleDB)
     environment:
       POSTGRES_DB: fitbit_data
       POSTGRES_USER: user
@@ -20,8 +20,8 @@ services:
 
   ingestion_app:
     build:
-      context: .
-      dockerfile: ingestion/Dockerfile
+      context: . # Build context is the project root
+      dockerfile: ingestion/Dockerfile # Dockerfile is in ingestion/
     restart: always
     depends_on:
       timescaledb:
@@ -31,18 +31,18 @@ services:
       DB_NAME: fitbit_data
       DB_USER: user
       DB_PASSWORD: password
-      FITBIT_CLIENT_ID: "YOUR_FITBIT_CLIENT_ID"
-      FITBIT_CLIENT_SECRET: "YOUR_FITBIT_CLIENT_SECRET"
+      FITBIT_CLIENT_ID: "YOUR_FITBIT_CLIENT_ID" # REPLACE THIS
+      FITBIT_CLIENT_SECRET: "YOUR_FITBIT_CLIENT_SECRET" # REPLACE THIS
     volumes:
-      - ./:/app # Mount entire project root to /app
+      - ./:/app # Mount entire project root to /app (for data files, scripts, source code)
 
   backend_app:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: . # Build context is the project root
+      dockerfile: backend/Dockerfile # Dockerfile is in backend/
     restart: always
     ports:
-      - "8001:8000"
+      - "8001:8000" # Host port 8000 mapped to container 8000 (Backend API)
     environment:
       DB_HOST: timescaledb
       DB_NAME: fitbit_data
@@ -52,17 +52,17 @@ services:
       timescaledb:
         condition: service_healthy
     volumes:
-      - ./:/app # Mount the entire project root to /app
+      - ./:/app # Mount the entire project root to /app (for backend code, pyproject.toml etc.)
 
-  frontend_app: # <--- NEW SERVICE START
+  frontend_app:
     build:
-      context: ./frontend # Build from the new 'frontend' folder
-      dockerfile: Dockerfile # Look for Dockerfile inside 'frontend'
+      context: ./frontend # Build context is the frontend folder
+      dockerfile: Dockerfile # Dockerfile is in frontend/
     restart: always
     ports:
-      - "80:80" # Map host port 80 (default web port) to container port 80
+      - "8081:80" # Host port 8081 mapped to container 80 (Frontend Web App)
     depends_on:
-      - backend_app # Ensure backend is ready for frontend to call it
+      - backend_app # Ensure backend is ready before frontend calls it
     volumes:
       - ./frontend/:/usr/share/nginx/html # Mount the frontend code into Nginx's serving directory
 

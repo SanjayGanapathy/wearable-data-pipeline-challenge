@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 import psycopg2
 
+print("SYNTHETIC DATA GENERATOR SCRIPT HAS STARTED!")  # <-- Debug print
+
 # --- Configuration (from environment variables) ---
 DB_HOST = os.getenv("DB_HOST", "timescaledb")
 DB_NAME = os.getenv("DB_NAME", "fitbit_data")
@@ -56,42 +58,54 @@ def generate_synthetic_fitbit_data(participant_id, start_date_str, end_date_str,
 
         # Simulate data for each hour of the day (e.g., 24 data points per day per metric)
         for hour in range(24):
-            # Generate a timestamp for this hour
-            timestamp_base = datetime(
-                current_date.year,
-                current_date.month,
-                current_date.day,
-                hour,
-                random.randint(0, 59),
-                random.randint(0, 59),
+            # Generate a base timestamp for this hour (e.g., 2025-06-01 10:00:00)
+            timestamp_base_hour = datetime(
+                current_date.year, current_date.month, current_date.day, hour, 0, 0
             )
 
             # --- Heart Rate (simulated BPM) ---
+            # Add unique random seconds offset within the hour for uniqueness
+            hr_timestamp = timestamp_base_hour + timedelta(
+                seconds=random.randint(0, 19)
+            )
             hr_value = random.randint(60, 100) + random.random()  # 60-100 BPM
             if insert_record_into_db(
-                cursor, participant_id, timestamp_base, "heart_rate", hr_value, None
+                cursor, participant_id, hr_timestamp, "heart_rate", hr_value, None
             ):
                 records_inserted_count += 1
                 daily_records_inserted += 1
 
             # --- Steps (simulated steps per hour) ---
+            # Add unique random seconds offset (different range than HR)
+            steps_timestamp = timestamp_base_hour + timedelta(
+                seconds=random.randint(20, 39)
+            )
             steps_value = random.randint(0, 500)  # 0-500 steps
             if insert_record_into_db(
-                cursor, participant_id, timestamp_base, "steps", steps_value, None
+                cursor, participant_id, steps_timestamp, "steps", steps_value, None
             ):
                 records_inserted_count += 1
                 daily_records_inserted += 1
 
             # --- Calories (simulated calories burned per hour) ---
+            # Add unique random seconds offset (different range than HR/Steps)
+            calories_timestamp = timestamp_base_hour + timedelta(
+                seconds=random.randint(40, 59)
+            )
             calories_value = random.randint(50, 200)  # 50-200 calories
             if insert_record_into_db(
-                cursor, participant_id, timestamp_base, "calories", calories_value, None
+                cursor,
+                participant_id,
+                calories_timestamp,
+                "calories",
+                calories_value,
+                None,
             ):
                 records_inserted_count += 1
                 daily_records_inserted += 1
 
         # --- Sleep Data (once per day/night for simplicity) ---
-        # Assume sleep start is always late evening of the current_date
+        # Sleep timestamp should ideally be unique per day for sleep records
         sleep_start_timestamp = datetime(
             current_date.year,
             current_date.month,

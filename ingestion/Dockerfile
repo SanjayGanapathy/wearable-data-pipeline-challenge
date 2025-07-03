@@ -2,7 +2,7 @@
 FROM python:3.10-slim-bullseye
 
 # Set the working directory in the container
-WORKDIR /app # This will now be your project root
+WORKDIR /app # This will now be your project root (due to docker-compose volume mount)
 
 # Install necessary system libraries for psycopg2-binary, plus cron
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cron \
     && rm -rf /var/lib/apt/lists/*
 
-# TEMPORARY: This line helps force cache rebuild on every build (remove later)
+# TEMPORARY: This line helps force cache rebuild on every build (remove later for clean builds)
 RUN echo "FORCE_INGESTION_BUILD_$(date +%s)"
 
 # Copy pyproject.toml and poetry.lock for Poetry to use during the build process
@@ -23,7 +23,7 @@ RUN pip install poetry
 RUN poetry install --no-root # Install production dependencies only
 
 # ALL PREVIOUS COPY INSTRUCTIONS FOR PROJECT-SPECIFIC FILES (wearipedia/, ingestion/) ARE REMOVED
-# because they are now available via the volume mount from docker-compose.yml
+# because they are now available via the volume mount from docker-compose.yml.
 
 # Set environment variables for database connection and Fitbit API credentials
 ENV DB_HOST=timescaledb

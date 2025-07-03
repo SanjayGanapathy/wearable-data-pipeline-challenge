@@ -47,6 +47,7 @@ async function fetchDataAndRenderChart() {
     const endDate = document.getElementById('endDate').value;
     const userId = document.getElementById('userId').value;
     const metric = document.getElementById('metric').value;
+    const imputeData = document.getElementById('imputeData').checked; // Read checkbox state
     const messageElement = document.getElementById('message');
 
     messageElement.textContent = 'Loading data...';
@@ -59,8 +60,9 @@ async function fetchDataAndRenderChart() {
     // Calculate offset for current page
     const offset = (currentPage - 1) * currentLimit;
 
-    // Construct URL with limit and offset
-    const url = `${backendBaseUrl}/data?start_date=${startDate}&end_date=${endDate}&user_id=${userId}&metric=${metric}&limit=${currentLimit}&offset=${offset}`;
+    // Conditionally build URL based on imputeData checkbox
+    const endpoint = imputeData ? '/data/imputed' : '/data';
+    const url = `${backendBaseUrl}${endpoint}?start_date=${startDate}&end_date=${endDate}&user_id=${userId}&metric=${metric}&limit=${currentLimit}&offset=${offset}`;
 
     try {
         const response = await fetch(url);
@@ -68,9 +70,11 @@ async function fetchDataAndRenderChart() {
             const errorData = await response.json();
             throw new Error(`Backend Error: ${response.status} - ${errorData.detail || response.statusText}`);
         }
-        const responseJson = await response.json(); // Backend now returns {data: [], total_count: N}
-        const data = responseJson.data;
-        totalRecords = responseJson.total_count; // Update total records
+        const responseJson = await response.json(); // Backend now returns {data: [], total_count: N} or [] for imputed
+
+        // Handle different response structures for /data vs /data/imputed
+        const data = Array.isArray(responseJson) ? responseJson : responseJson.data;
+        totalRecords = Array.isArray(responseJson) ? responseJson.length : responseJson.total_count;
 
         updatePageInfo(); // Update page info after fetching
 
@@ -87,8 +91,9 @@ async function fetchDataAndRenderChart() {
         // Prepare data for Chart.js
         const labels = data.map(item => item.timestamp);
         const values = data.map(item => item.value_numeric); 
+        const imputedFlags = data.map(item => item.is_imputed || false); // Get imputed flag (default to false)
 
-        renderChart(labels, values, metric);
+        renderChart(labels, values, metric, imputedFlags); // Pass imputedFlags
 
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -96,12 +101,26 @@ async function fetchDataAndRenderChart() {
     }
 }
 
-function renderChart(labels, values, metric) {
+// Pass imputedFlags to renderChart
+function renderChart(labels, values, metric, imputedFlags) {
     const ctx = document.getElementById('myChart').getContext('2d');
 
     if (myChart) {
         myChart.destroy(); // Destroy existing chart instance if it exists
     }
+
+    // Prepare point styles based on imputedFlag
+    const pointBackgroundColors = values.map((val, index) => 
+        imputedFlags[index] ? 'red' : 'rgb(75, 192, 192)' // Red for imputed, default for original
+    );
+    const pointBorderColors = pointBackgroundColors; // Same for border
+    const pointBorderWidths = values.map((val, index) => 
+        imputedFlags[index] ? 2 : 1 // Thicker border for imputed
+    );
+    const pointRadii = values.map((val, index) => 
+        imputedFlags[index] ? 4 : 3 // Larger radius for imputed
+    );
+
 
     myChart = new Chart(ctx, {
         type: 'line',
@@ -112,7 +131,11 @@ function renderChart(labels, values, metric) {
                 data: values,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1,
-                fill: false
+                fill: false,
+                pointBackgroundColor: pointBackgroundColors, // Apply conditional styles
+                pointBorderColor: pointBorderColors,
+                pointBorderWidth: pointBorderWidths,
+                pointRadius: pointRadii,
             }]
         },
         options: {
@@ -146,6 +169,11 @@ function renderChart(labels, values, metric) {
                             }
                             if (context.parsed.y !== null) {
                                 label += context.parsed.y.toFixed(2);
+                            }
+                            // Add imputed status to tooltip
+                            const index = context.dataIndex;
+                            if (imputedFlags[index]) {
+                                label += ' (Imputed)';
                             }
                             return label;
                         }
