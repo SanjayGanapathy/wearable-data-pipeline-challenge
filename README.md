@@ -173,4 +173,4 @@ This section outlines common pitfalls encountered during development and their s
     * **Solution:** Identify and stop the conflicting process (`netstat -ano`, `tasklist /svc`), or change the port mapping in `docker-compose.yml` (e.g., `5433:5432`, `8001:8000`, `8081:80`).
 * **`400 Client Error: Bad Request` (from Fitbit API):**
     * **Cause:** Often caused by requesting an invalid `detail_level` for a specific Fitbit metric (e.g., `1sec` for steps, which might only be available at `1min`).
-    * **Solution:** Adjust the requested `detail_level` in `fitbit_ingest.py` (e.
+    * **Solution:** Adjust the requested `detail_level` in `fitbit_ingest.py`
