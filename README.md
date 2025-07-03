@@ -34,7 +34,7 @@ To run this application stack locally, you will need:
 
 1.  **Clone the Repository (This new challenge-specific repo):**
     ```bash
-    git clone [https://github.com/SanjayGanapathy/wearable-data-pipeline-challenge.git](https://github.com/YOUR_GITHUB_USERNAME/wearable-data-pipeline-challenge.git)
+    git clone [https://github.com/YOUR_GITHUB_USERNAME/wearable-data-pipeline-challenge.git](https://github.com/YOUR_GITHUB_USERNAME/wearable-data-pipeline-challenge.git)
     cd wearable-data-pipeline-challenge # Navigate to the project root
     ```
     *(Replace `YOUR_GITHUB_USERNAME` with your actual GitHub username.)*
