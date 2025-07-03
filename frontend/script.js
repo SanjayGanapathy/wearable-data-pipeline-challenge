@@ -2,6 +2,46 @@ const backendBaseUrl = 'http://localhost:8001'; // Your FastAPI backend URL
 
 let myChart; // Variable to hold the Chart.js instance
 
+// Pagination state variables
+let currentPage = 1;
+let currentLimit = 50; // Default page size
+let totalRecords = 0; // Total records from backend
+
+// Function to update page info display
+function updatePageInfo() {
+    const pageInfoElement = document.getElementById('pageInfo');
+    const totalPages = Math.ceil(totalRecords / currentLimit);
+    pageInfoElement.textContent = `Page ${currentPage} of ${totalPages || 1}`;
+}
+
+// Event listeners for pagination buttons (defined in index.html)
+window.prevPage = function() {
+    if (currentPage > 1) {
+        currentPage--;
+        fetchDataAndRenderChart();
+    }
+};
+
+window.nextPage = function() {
+    const totalPages = Math.ceil(totalRecords / currentLimit);
+    if (currentPage < totalPages) {
+        currentPage++;
+        fetchDataAndRenderChart();
+    }
+};
+
+// Event listener for page size dropdown
+document.addEventListener('DOMContentLoaded', () => {
+    const pageSizeSelect = document.getElementById('pageSize');
+    pageSizeSelect.addEventListener('change', (event) => {
+        currentLimit = parseInt(event.target.value);
+        currentPage = 1; // Reset to first page when page size changes
+        fetchDataAndRenderChart();
+    });
+    updatePageInfo(); // Initialize page info on load
+});
+
+
 async function fetchDataAndRenderChart() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
@@ -16,7 +56,11 @@ async function fetchDataAndRenderChart() {
         return;
     }
 
-    const url = `${backendBaseUrl}/data?start_date=${startDate}&end_date=${endDate}&user_id=${userId}&metric=${metric}`;
+    // Calculate offset for current page
+    const offset = (currentPage - 1) * currentLimit;
+
+    // Construct URL with limit and offset
+    const url = `${backendBaseUrl}/data?start_date=${startDate}&end_date=${endDate}&user_id=${userId}&metric=${metric}&limit=${currentLimit}&offset=${offset}`;
 
     try {
         const response = await fetch(url);
@@ -24,12 +68,16 @@ async function fetchDataAndRenderChart() {
             const errorData = await response.json();
             throw new Error(`Backend Error: ${response.status} - ${errorData.detail || response.statusText}`);
         }
-        const data = await response.json();
+        const responseJson = await response.json(); // Backend now returns {data: [], total_count: N}
+        const data = responseJson.data;
+        totalRecords = responseJson.total_count; // Update total records
+
+        updatePageInfo(); // Update page info after fetching
 
         if (data.length === 0) {
-            messageElement.textContent = `No data found for ${metric} for participant ${userId} from ${startDate} to ${endDate}.`;
+            messageElement.textContent = `No data found for ${metric} for participant ${userId} from ${startDate} to ${endDate} on this page.`;
             if (myChart) {
-                myChart.destroy(); // Destroy old chart if no data
+                myChart.destroy();
             }
             return;
         }
@@ -37,8 +85,7 @@ async function fetchDataAndRenderChart() {
         messageElement.textContent = ''; // Clear message on success
 
         // Prepare data for Chart.js
-        // Simplification: Labels will just be the raw timestamp strings for now
-        const labels = data.map(item => item.timestamp); // Use raw timestamp string
+        const labels = data.map(item => item.timestamp);
         const values = data.map(item => item.value_numeric); 
 
         renderChart(labels, values, metric);
@@ -59,7 +106,7 @@ function renderChart(labels, values, metric) {
     myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: labels, // Now these are raw timestamp strings
+            labels: labels, 
             datasets: [{
                 label: `${metric} for ${document.getElementById('userId').value}`,
                 data: values,
@@ -72,11 +119,10 @@ function renderChart(labels, values, metric) {
             responsive: true,
             scales: {
                 x: {
-                    // Changed type from 'time' to 'category' or 'linear' for simplicity
-                    type: 'category', // Use 'category' for discrete string labels
+                    type: 'category', 
                     title: {
                         display: true,
-                        text: 'Datetime (Raw String)' // Update title
+                        text: 'Datetime (Raw String)' 
                     }
                 },
                 y: {
@@ -91,7 +137,7 @@ function renderChart(labels, values, metric) {
                 tooltip: {
                     callbacks: {
                         title: function(context) {
-                            return context[0].label; // Use the raw label
+                            return context[0].label; 
                         },
                         label: function(context) {
                             let label = context.dataset.label || '';
@@ -110,7 +156,8 @@ function renderChart(labels, values, metric) {
     });
 }
 
+// Initial load when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    // You might want to pre-populate or just load on button click
-    // fetchDataAndRenderChart();
+    // Automatically fetch data on page load with default settings
+    fetchDataAndRenderChart(); 
 });

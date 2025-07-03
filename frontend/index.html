@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitbit Data Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/cdn.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.min.js"></script>
     <style>
         body { 
             font-family: Arial, sans-serif; 
@@ -89,6 +91,18 @@
             <button onclick="fetchDataAndRenderChart()">Load Data</button>
         </div>
 
+        <div class="pagination-controls" style="margin-top: 20px; text-align: center;">
+            <label for="pageSize">Page Size:</label>
+            <select id="pageSize" style="padding: 5px; border-radius: 4px;">
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="250">250</option>
+                <option value="500">500</option>
+            </select>
+            <button onclick="prevPage()" style="margin-left: 10px;">Previous</button>
+            <span id="pageInfo" style="margin: 0 10px;">Page 1 of ?</span>
+            <button onclick="nextPage()">Next</button>
+        </div>
         <div class="chart-container">
             <canvas id="myChart"></canvas>
         </div>
