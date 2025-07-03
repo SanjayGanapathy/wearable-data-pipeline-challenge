@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg15
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: fitbit_data
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d fitbit_data"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ingestion_app:
+    build:
+      context: .
+      dockerfile: ingestion/Dockerfile
+    restart: always
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    environment:
+      DB_HOST: timescaledb
+      DB_NAME: fitbit_data
+      DB_USER: user
+      DB_PASSWORD: password
+      FITBIT_CLIENT_ID: "YOUR_FITBIT_CLIENT_ID"
+      FITBIT_CLIENT_SECRET: "YOUR_FITBIT_CLIENT_SECRET"
+    volumes:
+      - ./:/app # Mount entire project root to /app
+
+  backend_app:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: timescaledb
+      DB_NAME: fitbit_data
+      DB_USER: user
+      DB_PASSWORD: password
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    volumes:
+      - ./:/app # Mount the entire project root to /app
+
+  frontend_app: # <--- NEW SERVICE START
+    build:
+      context: ./frontend # Build from the new 'frontend' folder
+      dockerfile: Dockerfile # Look for Dockerfile inside 'frontend'
+    restart: always
+    ports:
+      - "80:80" # Map host port 80 (default web port) to container port 80
+    depends_on:
+      - backend_app # Ensure backend is ready for frontend to call it
+    volumes:
+      - ./frontend/:/usr/share/nginx/html # Mount the frontend code into Nginx's serving directory
+
+volumes:
+  timescaledb_data: # Define the named volume for TimescaleDB data

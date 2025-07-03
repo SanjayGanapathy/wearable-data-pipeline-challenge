@@ -1,0 +1,175 @@
+# Poetry pyproject.toml: https://python-poetry.org/docs/pyproject/
+[build-system]
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+name = "wearipedia"
+version = "0.1.6"
+description = "Wearable data for all"
+authors = [
+    {name = "The Stanford Wearipedia Project", email = "<arjo@stanford.edu>"},
+]
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/Stanford-Health/wearipedia"
+homepage = "http://wearipedia.com"
+
+# Keywords description https://python-poetry.org/docs/pyproject/#keywords
+keywords = []
+
+# Pypi classifiers: https://pypi.org/classifiers/
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+
+requires-python = ">=3.10, <3.13"
+dependencies = [
+    "typer[all]>=0.6.1",
+    "rich>=12.6.0",
+    "pandas>=2.2.2",
+    "tqdm>=4.64.1",
+    "scipy>=1.13.0",
+    "wget>=3.2",
+    "fbm>=0.3.0",
+    "beautifulsoup4>=4.12.2",
+    "myfitnesspal>=2.0.1",
+    "polyline>=2.0.0",
+    "jupyter>=1.0.0",
+    "fastapi==0.101",
+    "typing-extensions>=4.12.2",
+    "garminconnect>=0.2.25",
+    "garth>=0.5.2",
+    "numpy>=2.0.0",
+    "qualtricsapi>=0.6.1",
+    "psycopg2-binary (>=2.9.10,<3.0.0)",
+    "requests>=2.0.0",
+    "fastapi>=0.101.0,<0.102.0",
+    "uvicorn>=0.20.0,<0.21.0",
+]
+
+[tool.poetry.scripts]
+# Entry points for the package https://python-poetry.org/docs/pyproject/#scripts
+"wearipedia" = "wearipedia.cl_parser:parse_CLI"
+
+[tool.poetry.group.dev.dependencies]
+bandit = "^1.7.1"
+black = {version = "^22.10.0", allow-prereleases = true}
+darglint = "^1.8.1"
+insipid-sphinx-theme = "^0.3.6"
+isort = {extras = ["colors"], version = "^5.10.1"}
+mypy = "^0.982"
+mypy-extensions = "^0.4.3"
+pre-commit = "^2.15.0"
+pydocstyle = "^6.1.1"
+pytest = "^7.1.3"
+pylint = "^2.13"
+pyupgrade = "^3.1.0"
+safety = "^2.3.1"
+coverage = "^6.5.0"
+coverage-badge = "^1.1.0"
+pytest-html = "^3.1.1"
+pytest-cov = "^4.0.0"
+sphinx-reredirects = "^0.1.1"
+sphinx-copybutton = "^0.5.1"
+myst-parser = "^0.18.1"
+numpydoc = "^1.5.0"
+matplotlib = "^3.10.3"
+nbsphinx = "^0.9.7"
+pandoc = "^2.4"
+seaborn = "^0.13.2"
+
+[tool.black]
+# https://github.com/psf/black
+target-version = ["py39"]
+line-length = 88
+color = true
+
+exclude = '''
+/(
+    \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+    | env
+    | venv
+    | docs
+)/
+'''
+
+[tool.isort]
+# https://github.com/timothycrosley/isort/
+py_version = 39
+line_length = 88
+
+known_typing = ["typing", "types", "typing_extensions", "mypy", "mypy_extensions"]
+sections = ["FUTURE", "TYPING", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+include_trailing_comma = true
+profile = "black"
+multi_line_output = 3
+indent = 4
+color_output = true
+
+[tool.mypy]
+# https://mypy.readthedocs.io/en/latest/config_file.html#using-a-pyproject-toml-file
+python_version = 3.9
+pretty = true
+show_traceback = true
+color_output = true
+
+allow_redefinition = false
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+ignore_missing_imports = true
+implicit_reexport = false
+no_implicit_optional = true
+show_column_numbers = true
+show_error_codes = true
+show_error_context = true
+strict_equality = true
+strict_optional = true
+warn_no_return = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+
+[tool.pytest.ini_options]
+# https://docs.pytest.org/en/6.2.x/customize.html#pyproject-toml
+# Directories that are not visited by pytest collector:
+norecursedirs =["hooks", "*.egg", ".eggs", "dist", "build", "docs", ".tox", ".git", "__pycache__"]
+doctest_optionflags = ["NUMBER", "NORMALIZE_WHITESPACE", "IGNORE_EXCEPTION_DETAIL"]
+
+# Extra options:
+addopts = [
+    "--strict-markers",
+    "--tb=short",
+    "--doctest-modules",
+    "--doctest-continue-on-failure",
+]
+
+[tool.coverage.run]
+source = ["tests"]
+
+[coverage.paths]
+source = "wearipedia"
+
+[coverage.run]
+branch = true
+
+[coverage.report]
+fail_under = 50
+show_missing = true
