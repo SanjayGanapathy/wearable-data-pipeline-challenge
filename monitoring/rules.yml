@@ -1,0 +1,12 @@
+groups:
+  - name: application_alerts
+    rules:
+      - alert: HighErrorCount
+        # This alert now fires if there are more than 5 requests with a 4xx status code in the last minute.
+        expr: increase(http_requests_total{status_code=~"4.."}[1m]) > 5
+        for: 10s
+        labels:
+          severity: "warning"
+        annotations:
+          summary: "Multiple client errors on backend!"
+          description: "More than 5 client errors (4xx) detected in the last minute."

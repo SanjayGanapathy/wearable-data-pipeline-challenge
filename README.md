@@ -119,8 +119,43 @@ This task builds upon the initial proof-of-concept to deliver a more detailed an
     * **Solution:** A more sophisticated, multi-strategy approach was implemented in the Python backend.
         * **ARIMA Model:** For continuous, dense data like `heart_rate`, an ARIMA time-series forecasting model is used to generate realistic, curved imputed values.
         * **Forward-Fill (`ffill`):** For sparse, cumulative data like `steps`, a logical forward-fill (and backward-fill for initial gaps) is used, which is more appropriate for that data type.
-    * **Tracking Imputed Values:** The backend stores imputed data in a separate `imputed_data` table. Grafana queries both tables and displays the imputed data as a distinct, dashed line, making it easy for researchers to distinguish between real and imputed values.
+    * **Tracking Imputed Values:** The backend stores imputed data in a separate `imputed_data` table. Grafana queries both tables and displays the imputed data as a distinctly colored line, making it easy for researchers to distinguish between real and imputed values.
 
 * **Participant Interaction:**
     * **Clickable Participant List**: A master list of all participants is displayed on the dashboard. Clicking a participant's ID dynamically filters all dashboard panels to show data for only that user.
     * **Method to Contact Participants**: From the participant list, a user can click a link to open a dedicated contact page. This page, served by the FastAPI backend, allows for sending templated emails to participants based on their adherence status. This decouples the communication action from the dashboard itself while providing a seamless user workflow.
+
+---
+
+## **Task 5: Monitoring & Alerting**
+
+This project includes a comprehensive monitoring and alerting stack built with Prometheus, Grafana, and AlertManager to ensure the data pipeline is observable and reliable.
+
+### Architecture
+
+* **Metrics Collection**:
+    * **Prometheus**: Scrapes and stores time-series metrics from all services.
+    * **cAdvisor**: Exposes per-container resource usage metrics (CPU, memory, network).
+    * **Node Exporter**: Exposes host machine metrics (CPU, memory, disk I/O).
+    * **Custom Backend Metrics**: The Python backend is manually instrumented to expose a `/metrics` endpoint with custom counters for HTTP requests.
+
+* **Visualization**:
+    * **Grafana**: Connects to Prometheus as a data source to visualize both application and infrastructure metrics. Includes pre-built dashboards for Node Exporter and Docker/cAdvisor.
+
+* **Alerting**:
+    * **AlertManager**: Handles alerts sent by Prometheus. It is configured to route notifications based on severity and can be set up with real SMTP credentials to send email alerts to `admin@wearipedia.com`.
+
+### How to Use the Monitoring Stack
+
+1.  **Access the UIs**:
+    * **Grafana**: `http://localhost:3000` (Dashboards for visualization)
+    * **Prometheus**: `http://localhost:9090` (Check service discovery targets and alert states)
+    * **AlertManager**: `http://localhost:9093` (See active and silenced alerts)
+    * **cAdvisor**: `http://localhost:8082` (Detailed real-time container metrics)
+
+2.  **Validate Alerts**:
+    * To test the `HighErrorCount` alert, send several failing requests to the backend:
+        ```bash
+        curl "http://localhost:8001/this-will-fail"
+        ```
+    * After sending 6+ requests within a minute, the alert will become "Pending" and then "Firing" in the Prometheus and AlertManager UIs.

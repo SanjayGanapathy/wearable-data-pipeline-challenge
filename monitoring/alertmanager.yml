@@ -1,0 +1,27 @@
+global:
+  resolve_timeout: 5m
+  # Replace with your actual SMTP server details for real emails
+  smtp_from: 'alertmanager@example.com'
+  smtp_smarthost: 'smtp.gmail.com:587' # Example for Gmail
+  smtp_auth_username: 'your-email@gmail.com'
+  smtp_auth_password: 'YOUR_APP_PASSWORD' # Use an app-specific password for security
+
+route:
+  receiver: 'email_notifications'
+  group_by: ['alertname', 'severity'] # Group alerts by name and severity
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 1h
+
+  # If an alert is critical, send it immediately.
+  routes:
+    - match:
+        severity: 'critical'
+      receiver: 'email_notifications'
+      continue: true
+
+receivers:
+  - name: 'email_notifications'
+    email_configs:
+      - to: 'admin@wearipedia.com'
+        send_resolved: true # Send a notification when the alert is resolved

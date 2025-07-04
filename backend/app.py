@@ -1,6 +1,9 @@
 # backend/app.py
 
 import os
+from prometheus_client import Counter, make_asgi_app
+from starlette.middleware.base import BaseHTTPMiddleware
+import time
 import pandas as pd
 import asyncpg
 from fastapi import FastAPI, HTTPException, Query, Depends
@@ -10,6 +13,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from typing import List, Dict, Any
 from sklearn.impute import KNNImputer
 from datetime import datetime
+from prometheus_fastapi_instrumentator import Instrumentator
 
 
 # --- Database Connection ---
@@ -26,6 +30,49 @@ async def get_db():
 
 
 app = FastAPI()
+
+# This line creates the instrumentator
+instrumentator = Instrumentator().instrument(app)
+
+# This line exposes the /metrics endpoint
+instrumentator.expose(app)
+
+# Create a custom counter metric
+
+http_requests_total = Counter(
+    "http_requests_total",
+    "Total number of HTTP requests",
+    ["method", "endpoint", "status_code"],
+)
+
+
+class PrometheusMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        start_time = time.time()
+        response = await call_next(request)
+
+        # Get endpoint path template, e.g., /data, not /data?start_date=...
+        endpoint = (
+            request.scope.get("route").path
+            if request.scope.get("route")
+            else request.scope.get("path")
+        )
+
+        http_requests_total.labels(
+            method=request.method,
+            endpoint=endpoint,
+            status_code=str(response.status_code),
+        ).inc()
+
+        return response
+
+
+# Add the middleware to the app
+app.add_middleware(PrometheusMiddleware)
+
+# Create a separate app for the /metrics endpoint
+metrics_app = make_asgi_app()
+app.mount("/metrics", metrics_app)
 
 # --- Pydantic Models ---
 
