@@ -125,8 +125,6 @@ This task builds upon the initial proof-of-concept to deliver a more detailed an
     * **Clickable Participant List**: A master list of all participants is displayed on the dashboard. Clicking a participant's ID dynamically filters all dashboard panels to show data for only that user.
     * **Method to Contact Participants**: From the participant list, a user can click a link to open a dedicated contact page. This page, served by the FastAPI backend, allows for sending templated emails to participants based on their adherence status. This decouples the communication action from the dashboard itself while providing a seamless user workflow.
 
----
-
 ## **Task 5: Monitoring & Alerting**
 
 This project includes a comprehensive monitoring and alerting stack built with Prometheus, Grafana, and AlertManager to ensure the data pipeline is observable and reliable.
