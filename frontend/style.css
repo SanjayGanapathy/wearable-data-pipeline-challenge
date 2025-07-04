@@ -1,0 +1,96 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    background-color: #f8f9fa;
+    display: flex;
+    height: 100vh;
+    overflow: hidden; /* Prevent body from scrolling */
+}
+.sidebar {
+    width: 280px;
+    background-color: #fff;
+    border-right: 1px solid #dee2e6;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar h1 {
+    font-size: 1.5em;
+    margin: 0 0 20px 0;
+}
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.controls-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+.controls-section label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.controls-section input,
+.controls-section select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.impute-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.impute-controls label { margin-bottom: 0; }
+.impute-controls input[type="checkbox"] { width: auto; }
+
+.participant-container {
+    flex: 1; /* Allows this container to grow and fill available space */
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Important for flex child */
+}
+.participant-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
+}
+.participant-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 4px;
+}
+.participant-item:hover { background-color: #f0f0f0; }
+.participant-item.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+.chart-container {
+    flex-grow: 1;
+    position: relative; /* Needed for canvas sizing */
+}
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.pagination-controls {
+    flex-shrink: 0; /* Prevent this from shrinking */
+    text-align: center;
+    padding-top: 15px;
+}

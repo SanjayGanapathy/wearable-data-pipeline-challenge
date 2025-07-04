@@ -51,6 +51,7 @@ dependencies = [
     "requests>=2.0.0",
     "fastapi>=0.101.0,<0.102.0",
     "uvicorn>=0.20.0,<0.21.0",
+    "scikit-learn (>=1.7.0,<2.0.0)",
 ]
 
 [tool.poetry.scripts]
@@ -59,6 +60,8 @@ dependencies = [
 
 [tool.poetry.group.dev.dependencies]
 bandit = "^1.7.1"
+asyncpg = "^0.29.0"
+statsmodels = "^0.14.2"
 black = {version = "^22.10.0", allow-prereleases = true}
 darglint = "^1.8.1"
 insipid-sphinx-theme = "^0.3.6"

@@ -66,5 +66,20 @@ services:
     volumes:
       - ./frontend/:/usr/share/nginx/html # Mount the frontend code into Nginx's serving directory
 
+  grafana:
+    image: grafana/grafana:latest
+    restart: always
+    ports:
+      - "3000:3000" # Grafana UI will be on http://localhost:3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - timescaledb
+
+
 volumes:
   timescaledb_data: # Define the named volume for TimescaleDB data
+  grafana_data: # Define the named volume for Grafana data
