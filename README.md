@@ -39,7 +39,7 @@ To run this application stack locally, you will need **Docker Desktop** and **Gi
 ### Step 1: Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/SanjayGanapathy/wearable-data-pipeline-challenge
 cd wearable-data-pipeline-challenge
 ```
 
