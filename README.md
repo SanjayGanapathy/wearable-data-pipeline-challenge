@@ -119,7 +119,7 @@ This task builds upon the initial proof-of-concept to deliver a more detailed an
     * **Solution:** A more sophisticated, multi-strategy approach was implemented in the Python backend.
         * **ARIMA Model:** For continuous, dense data like `heart_rate`, an ARIMA time-series forecasting model is used to generate realistic, curved imputed values.
         * **Forward-Fill (`ffill`):** For sparse, cumulative data like `steps`, a logical forward-fill (and backward-fill for initial gaps) is used, which is more appropriate for that data type.
-    * **Tracking Imputed Values:** The backend stores imputed data in a separate `imputed_data` table. Grafana queries both tables and displays the imputed data as a distinct, dashed line, making it easy for researchers to distinguish between real and imputed values.
+    * **Tracking Imputed Values:** The backend stores imputed data in a separate `imputed_data` table. Grafana queries both tables and displays the imputed data as a distinctly colored line, making it easy for researchers to distinguish between real and imputed values.
 
 * **Participant Interaction:**
     * **Clickable Participant List**: A master list of all participants is displayed on the dashboard. Clicking a participant's ID dynamically filters all dashboard panels to show data for only that user.
