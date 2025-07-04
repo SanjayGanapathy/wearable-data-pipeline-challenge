@@ -6,9 +6,8 @@ import numpy as np
 import pandas as pd
 import psycopg2
 
-print("SYNTHETIC DATA GENERATOR SCRIPT HAS STARTED!")  # <-- Debug print
-
-# --- Configuration (from environment variables) ---
+# This script generates synthetic Fitbit data and inserts it into a PostgreSQL database.
+# Configuration (from environment variables)
 DB_HOST = os.getenv("DB_HOST", "timescaledb")
 DB_NAME = os.getenv("DB_NAME", "fitbit_data")
 DB_USER = os.getenv("DB_USER", "user")
@@ -21,7 +20,7 @@ SYNTHETIC_START_DATE_STR = "2025-06-01"
 SYNTHETIC_END_DATE_STR = "2025-06-30"
 
 
-# --- Database Insertion Function ---
+# Database Insertion Function
 def insert_record_into_db(
     cursor, participant_id, timestamp, data_type, value_numeric, value_text
 ):
@@ -40,7 +39,7 @@ def insert_record_into_db(
         return False
 
 
-# --- Synthetic Data Generation Logic (Independent of Wearipedia) ---
+# Synthetic Data Generation Logic (My own version independent of Wearipedia)
 def generate_synthetic_fitbit_data(participant_id, start_date_str, end_date_str, conn):
     cursor = conn.cursor()
     records_inserted_count = 0
@@ -63,7 +62,7 @@ def generate_synthetic_fitbit_data(participant_id, start_date_str, end_date_str,
                 current_date.year, current_date.month, current_date.day, hour, 0, 0
             )
 
-            # --- Heart Rate (simulated BPM) ---
+            # Heart Rate (simulated BPM)
             # Add unique random seconds offset within the hour for uniqueness
             hr_timestamp = timestamp_base_hour + timedelta(
                 seconds=random.randint(0, 19)
@@ -75,7 +74,7 @@ def generate_synthetic_fitbit_data(participant_id, start_date_str, end_date_str,
                 records_inserted_count += 1
                 daily_records_inserted += 1
 
-            # --- Steps (simulated steps per hour) ---
+            # Steps (simulated steps per hour)
             # Add unique random seconds offset (different range than HR)
             steps_timestamp = timestamp_base_hour + timedelta(
                 seconds=random.randint(20, 39)
@@ -87,7 +86,7 @@ def generate_synthetic_fitbit_data(participant_id, start_date_str, end_date_str,
                 records_inserted_count += 1
                 daily_records_inserted += 1
 
-            # --- Calories (simulated calories burned per hour) ---
+            # Calories (simulated calories burned per hour)
             # Add unique random seconds offset (different range than HR/Steps)
             calories_timestamp = timestamp_base_hour + timedelta(
                 seconds=random.randint(40, 59)
@@ -104,7 +103,7 @@ def generate_synthetic_fitbit_data(participant_id, start_date_str, end_date_str,
                 records_inserted_count += 1
                 daily_records_inserted += 1
 
-        # --- Sleep Data (once per day/night for simplicity) ---
+        # Sleep Data (once per day/night for simplicity)
         # Sleep timestamp should ideally be unique per day for sleep records
         sleep_start_timestamp = datetime(
             current_date.year,
@@ -147,7 +146,6 @@ def generate_synthetic_fitbit_data(participant_id, start_date_str, end_date_str,
                 daily_records_inserted += 1
 
         conn.commit()  # Commit changes for each day
-        # --- CORRECTED PRINT STATEMENT ---
         print(
             f"Completed synthetic data for {current_date.strftime('%Y-%m-%d')}. Records inserted this day: {daily_records_inserted}. Total records so far: {records_inserted_count}"
         )

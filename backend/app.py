@@ -16,7 +16,7 @@ from datetime import datetime
 from prometheus_fastapi_instrumentator import Instrumentator
 
 
-# --- Database Connection ---
+# Database Connection
 DATABASE_URL = "postgresql://user:password@timescaledb:5432/fitbit_data"
 
 
@@ -51,7 +51,6 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
         start_time = time.time()
         response = await call_next(request)
 
-        # Get endpoint path template, e.g., /data, not /data?start_date=...
         endpoint = (
             request.scope.get("route").path
             if request.scope.get("route")
@@ -74,8 +73,7 @@ app.add_middleware(PrometheusMiddleware)
 metrics_app = make_asgi_app()
 app.mount("/metrics", metrics_app)
 
-# --- Pydantic Models ---
-
+# Pydantic Models
 
 class TimeSeriesData(BaseModel):
     timestamp: str
@@ -93,7 +91,7 @@ class ContactPayload(BaseModel):
     reason: str
 
 
-# --- Helper Functions ---
+# Helper Functions
 
 
 async def insert_data_to_db(data: List[Dict[str, Any]], table_name: str):
@@ -111,7 +109,7 @@ async def insert_data_to_db(data: List[Dict[str, Any]], table_name: str):
         await conn.close()
 
 
-# --- API Endpoints ---
+# API Endpoints
 
 
 @app.get("/data", response_model=DataResponse)
@@ -223,7 +221,6 @@ async def run_and_store_imputation(
     else:  # Use ffill and bfill for sparse data like steps
         original_indices = df_resampled[metric].dropna().index
 
-        # --- THIS IS THE FIX ---
         df_resampled[metric].fillna(method="ffill", inplace=True)  # First, forward-fill
         df_resampled[metric].fillna(
             method="bfill", inplace=True

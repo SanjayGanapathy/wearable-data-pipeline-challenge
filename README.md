@@ -1,159 +1,211 @@
-# Wearable Data Pipeline & Dashboard Challenge Solution
+# Wearable Data Pipeline, Dashboard & Monitoring
 
 ## Project Overview
 
-This repository contains the complete solution for a software engineering challenge focused on building a full-stack data pipeline and visualization application for wearable device data. The system is designed to extract, process, store, and visualize time-series data, with an emphasis on extensibility and performance for clinical trials research.
+This repository contains my complete solution for a software engineering challenge focused on building a full-stack data pipeline and visualization application for wearable device data. The system is designed to ingest, process, store, and visualize time-series data from Fitbit devices, with a professional-grade monitoring and alerting stack to ensure reliability.
 
-This solution specifically implements:
-* **Task 1:** A daily, delta-load data pipeline to ingest Fitbit data into a locally hosted TimescaleDB.
-* **Task 2 & 3:** An access/read flow with a backend API, plus database-side optimizations (Continuous Aggregates, Compression) for handling large-scale queries.
-* **Task 4:** A detailed **Grafana dashboard** for in-depth analysis, featuring an adherence overview, advanced data imputation, and a participant contact system.
+In this project, I implemented:
+
+- A daily data pipeline to ingest Fitbit data into a TimescaleDB database.
+- A detailed Grafana dashboard for in-depth analysis, featuring an adherence overview and advanced data imputation.
+- A complete monitoring and alerting stack using Prometheus, Grafana, and AlertManager to ensure pipeline observability.
 
 ---
-## Challenge Context
 
-The overarching goal is to develop portions of a software app that can ETL wearable data and create useful analysis/visualizations for clinical trials. This involves handling large numbers of participants (up to N=1,000), creating intuitive dashboards, and providing extensible data formats. The current focus is on Fitbit Charge data, delivering intraday, time-series metrics.
+## Key Features
 
-**Key Design Principles Adhered To:**
-* **Modularity & Extensibility:** Data schema and service architecture are designed for easy expansion to accommodate new devices and metrics.
-* **Industry Standards:** Leverages Docker for containerization, Docker Compose for multi-service orchestration, Python with Poetry for dependency management, and standard web technologies (FastAPI, Grafana).
-* **Performance & Resource Efficiency:** Implements database-level optimizations and intelligent data imputation strategies.
-* **Clean Code & Maintainability:** Code is structured logically and adheres to Python best practices.
+- **Interactive Grafana Dashboard**: I built a powerful, interactive dashboard for deep analysis of time-series health metrics.
+- **Adherence Overview**: I created at-a-glance panels that monitor participant compliance, including inactivity, low wear time, and poor sleep data quality.
+- **Advanced Data Imputation**: I implemented a robust backend process that uses the appropriate model (ARIMA for continuous data, forward-fill for sparse data) to reliably fill gaps in the time-series data.
+- **Participant Interaction**: I developed a clickable master list of participants to dynamically filter the dashboard, with integrated links to a separate contact form for researcher outreach.
+- **Full Observability Stack**: I deployed a complete application monitoring stack using Prometheus, with pre-configured alerts for performance issues and dashboards to visualize container and host metrics.
+
+---
+
+## Technology Stack
+
+- **Backend**: Python, FastAPI, Pandas, Statsmodels  
+- **Database**: PostgreSQL with TimescaleDB extension  
+- **Dashboard**: Grafana  
+- **Monitoring**: Prometheus, AlertManager, cAdvisor, Node Exporter  
+- **Containerization**: Docker & Docker Compose  
 
 ---
 
 ## Local Setup & Launch Instructions
 
-To run this application stack locally, you will need:
+To run this application stack locally, you will need **Docker Desktop** and **Git**.
 
-* **Docker Desktop:** Installed and running.
-* **Python & Poetry:** For managing backend dependencies.
-* **Git:** For cloning the repository.
+### Step 1: Clone the Repository
 
-**Steps to get the entire application running:**
+```bash
+git clone <your-repo-url>
+cd wearable-data-pipeline-challenge
+```
 
-1.  **Clone the Repository:**
-    ```bash
-    git clone <your-repo-url>
-    cd wearable-data-pipeline-challenge
-    ```
+### Step 2: Configure Placeholders
 
-2.  **Update Backend Dependencies:** The new imputation methods require additional libraries.
-    * Navigate to the `backend` directory.
-    * Run `poetry lock` to ensure your `poetry.lock` file is up-to-date with the new `statsmodels` and `asyncpg` dependencies listed in `pyproject.toml`.
-    * Return to the project root directory.
+You must update several placeholder values in the project files before launching the application.
 
-3.  **Perform Docker Build & Launch:**
-    * Open your terminal in the project root.
-    * Run the following commands to build the images and start the containers:
-        ```bash
-        docker compose build
-        docker compose up -d
-        ```
-    * **Verification:** Run `docker compose ps`. You should see `timescaledb`, `ingestion_app`, `backend_app`, and `grafana` all listed as `Up`.
+**Fitbit API Credentials**  
+File to edit: `docker-compose.yml`  
+Placeholders:
 
-4.  **Initialize Database Schema:**
-    * Connect to `psql` to create the necessary tables:
-        ```bash
-        docker compose exec timescaledb psql -U user -d fitbit_data
-        ```
-    * At the `fitbit_data=#` prompt, paste these SQL commands to create the `raw_data` and `imputed_data` tables:
-        ```sql
-        -- Create raw_data table
-        CREATE TABLE raw_data (
-            timestamp TIMESTAMPTZ NOT NULL,
-            participant_id TEXT NOT NULL,
-            data_type TEXT NOT NULL,
-            value_numeric DOUBLE PRECISION,
-            value_text TEXT
-        );
-        SELECT create_hypertable('raw_data', 'timestamp');
+- `YOUR_FITBIT_CLIENT_ID`
+- `YOUR_FITBIT_CLIENT_SECRET`
 
-        -- Create imputed_data table
-        CREATE TABLE imputed_data (
-            "timestamp" TIMESTAMPTZ NOT NULL,
-            participant_id TEXT,
-            data_type TEXT,
-            value_numeric DOUBLE PRECISION,
-            value_text TEXT,
-            is_imputed BOOLEAN DEFAULT TRUE
-        );
-        ```
-    * Type `\q` to exit `psql`.
+**Fitbit User ID for Synthetic Data**  
+File to edit: `ingestion/synthetic_data_generator.py`  
+Placeholder:
 
-5.  **Generate and Load Synthetic Data:**
-    * Run the synthetic data generator script:
-        ```bash
-        docker compose exec ingestion_app poetry run python /app/ingestion/synthetic_data_generator.py
-        ```
+- `YOUR_FITBIT_USER_ID`
 
-6.  **Run the Imputation Process:**
-    * This step is required to populate the `imputed_data` table. Run these commands in your terminal:
-        ```bash
-        # For heart rate (uses ARIMA model)
-        curl -X POST "http://localhost:8001/data/run_imputation?user_id=test_participant_1&metric=heart_rate"
+**AlertManager Email Configuration**  
+File to edit: `monitoring/alertmanager.yml`  
+Placeholders:
 
-        # For steps (uses forward-fill)
-        curl -X POST "http://localhost:8001/data/run_imputation?user_id=test_participant_1&metric=steps"
-        ```
+- `your-email@gmail.com` (your sender email address)
+- `YOUR_APP_PASSWORD` (use an app-specific password from your email provider for security)
+- `admin@wearipedia.com` (the recipient email address)
 
-7.  **Access the Services:**
-    * **Grafana Dashboard**: Open your browser and navigate to `http://localhost:3000`. The default login is `admin` / `password`.
-    * **Contact Form**: Access the participant contact page at `http://localhost:8001/contact`.
-    * **Backend API Docs**: The backend API documentation is available at `http://localhost:8001/docs`.
+### Step 3: Update Dependencies (If necessary)
+
+If you have modified the backend dependencies in `pyproject.toml`, ensure the lock file is up to date.
+
+```bash
+# Navigate into the backend directory
+cd backend
+
+# Update the lock file
+poetry lock
+
+# Return to the project root
+cd ..
+```
+
+### Step 4: Build and Launch the Stack
+
+From the root directory of the project, run the following command to build all Docker images and start the services.
+
+```bash
+docker compose up -d --build
+```
+
+**Verification:**  
+Run `docker compose ps`. You should see `timescaledb`, `ingestion_app`, `backend_app`, `grafana`, `prometheus`, `alertmanager`, `node_exporter`, and `cadvisor` all listed as **Up**.
+
+### Step 5: Initialize the Database
+
+The database is initially empty. You need to create the tables and load the initial data.
+
+**Connect to the database:**
+
+```bash
+docker compose exec timescaledb psql -U user -d fitbit_data
+```
+
+**Paste these SQL commands at the `psql` prompt to create the tables:**
+
+```sql
+-- Create raw_data table
+CREATE TABLE raw_data (
+    timestamp TIMESTAMPTZ NOT NULL,
+    participant_id TEXT NOT NULL,
+    data_type TEXT NOT NULL,
+    value_numeric DOUBLE PRECISION,
+    value_text TEXT
+);
+SELECT create_hypertable('raw_data', 'timestamp');
+
+-- Create imputed_data table
+CREATE TABLE imputed_data (
+    "timestamp" TIMESTAMPTZ NOT NULL,
+    participant_id TEXT,
+    data_type TEXT,
+    value_numeric DOUBLE PRECISION,
+    value_text TEXT,
+    is_imputed BOOLEAN DEFAULT TRUE
+);
+```
+
+Exit the database shell by typing `\q`.
+
+**Generate and load synthetic data:**
+
+```bash
+docker compose exec ingestion_app poetry run python /app/ingestion/synthetic_data_generator.py
+```
 
 ---
-## **Task 4: Detailed Analysis Dashboard**
 
-**Overview:**
-This task builds upon the initial proof-of-concept to deliver a more detailed and powerful dashboard for in-depth analysis and visualization, leveraging Grafana for its robust time-series capabilities.
+## Using the Application
 
-**Design Decisions & Implementation:**
-* **Adherence Overview:** The dashboard features a top-level summary with key compliance metrics:
-    * **Total Active Participants**: A count of all unique users who have submitted data.
-    * **Inactive Participants**: A panel showing users who have not uploaded data in the last 48 hours.
-    * **Low Sleep / Wear Time**: Panels that flag users who fall below predefined thresholds for sleep quality or overall wear time adherence.
+**Grafana Dashboard:**  
+[http://localhost:3000](http://localhost:3000)  
+Login with: `admin` / `password`
 
-* **Advanced Data Imputation:**
-    * **Problem:** Simple imputation methods like mean/median are insufficient for clinical data. The initial KNN method proved too simplistic for large data gaps.
-    * **Solution:** A more sophisticated, multi-strategy approach was implemented in the Python backend.
-        * **ARIMA Model:** For continuous, dense data like `heart_rate`, an ARIMA time-series forecasting model is used to generate realistic, curved imputed values.
-        * **Forward-Fill (`ffill`):** For sparse, cumulative data like `steps`, a logical forward-fill (and backward-fill for initial gaps) is used, which is more appropriate for that data type.
-    * **Tracking Imputed Values:** The backend stores imputed data in a separate `imputed_data` table. Grafana queries both tables and displays the imputed data as a distinctly colored line, making it easy for researchers to distinguish between real and imputed values.
+Add Prometheus as a data source (`http://prometheus:9090`).
 
-* **Participant Interaction:**
-    * **Clickable Participant List**: A master list of all participants is displayed on the dashboard. Clicking a participant's ID dynamically filters all dashboard panels to show data for only that user.
-    * **Method to Contact Participants**: From the participant list, a user can click a link to open a dedicated contact page. This page, served by the FastAPI backend, allows for sending templated emails to participants based on their adherence status. This decouples the communication action from the dashboard itself while providing a seamless user workflow.
+Import dashboards using Grafana.com IDs:
 
-## **Task 5: Monitoring & Alerting**
+- `1860` for Node Exporter
+- `14282` for Docker Monitoring
 
-This project includes a comprehensive monitoring and alerting stack built with Prometheus, Grafana, and AlertManager to ensure the data pipeline is observable and reliable.
+**Participant Contact Form:**  
+[http://localhost:8001/contact](http://localhost:8001/contact)
 
-### Architecture
+**Run Data Imputation** (Required to see imputed data in Grafana):
 
-* **Metrics Collection**:
-    * **Prometheus**: Scrapes and stores time-series metrics from all services.
-    * **cAdvisor**: Exposes per-container resource usage metrics (CPU, memory, network).
-    * **Node Exporter**: Exposes host machine metrics (CPU, memory, disk I/O).
-    * **Custom Backend Metrics**: The Python backend is manually instrumented to expose a `/metrics` endpoint with custom counters for HTTP requests.
+```bash
+# For heart rate (uses ARIMA model)
+curl -X POST "http://localhost:8001/data/run_imputation?user_id=test_participant_1&metric=heart_rate"
 
-* **Visualization**:
-    * **Grafana**: Connects to Prometheus as a data source to visualize both application and infrastructure metrics. Includes pre-built dashboards for Node Exporter and Docker/cAdvisor.
+# For steps (uses forward-fill)
+curl -X POST "http://localhost:8001/data/run_imputation?user_id=test_participant_1&metric=steps"
+```
 
-* **Alerting**:
-    * **AlertManager**: Handles alerts sent by Prometheus. It is configured to route notifications based on severity and can be set up with real SMTP credentials to send email alerts to `admin@wearipedia.com`.
+---
 
-### How to Use the Monitoring Stack
+## Monitoring UIs
 
-1.  **Access the UIs**:
-    * **Grafana**: `http://localhost:3000` (Dashboards for visualization)
-    * **Prometheus**: `http://localhost:9090` (Check service discovery targets and alert states)
-    * **AlertManager**: `http://localhost:9093` (See active and silenced alerts)
-    * **cAdvisor**: `http://localhost:8082` (Detailed real-time container metrics)
+- **Prometheus**: [http://localhost:9090](http://localhost:9090)  
+- **AlertManager**: [http://localhost:9093](http://localhost:9093)  
+- **cAdvisor**: [http://localhost:8082](http://localhost:8082)  
 
-2.  **Validate Alerts**:
-    * To test the `HighErrorCount` alert, send several failing requests to the backend:
-        ```bash
-        curl "http://localhost:8001/this-will-fail"
-        ```
-    * After sending 6+ requests within a minute, the alert will become "Pending" and then "Firing" in the Prometheus and AlertManager UIs.
+---
+
+## Troubleshooting & Development Journey
+
+This section outlines key challenges I encountered during development and their solutions, demonstrating a robust and iterative problem-solving process.
+
+### Initial Setup & Docker Networking
+
+**Challenge:**  
+Services failing to start due to `Bind for 0.0.0.0:XXXX failed: port is already allocated`.
+
+**Solution:**  
+I identified and resolved port conflicts by re-mapping host ports in `docker-compose.yml` (e.g., mapping cAdvisor to `8082:8080`). This highlighted the importance of isolating services and managing host resources.
+
+### Backend Application & Dependencies
+
+**Challenge:**  
+The backend container repeatedly failed to start due to a variety of Python errors, including `SyntaxError`, `NameError`, and `ModuleNotFoundError`.
+
+**Solution:**  
+This required a multi-step debugging process. I used `docker compose logs backend_app` to identify the specific error, fixed typos and incorrect import statements in `app.py`, and updated the `backend/pyproject.toml` and `poetry.lock` files to include missing dependencies, followed by a full `docker compose build`.
+
+### Data Imputation Logic
+
+**Challenge:**  
+The initial KNN imputation method produced unrealistic, flat-line data for large gaps. A subsequent ARIMA implementation failed for sparse data like steps and had runtime errors for heart_rate.
+
+**Solution:**  
+I developed a more sophisticated, multi-strategy imputation function. The final version uses the powerful ARIMA model for dense, continuous signals like `heart_rate` but intelligently switches to a more appropriate forward-fill (`ffill`) and backward-fill (`bfill`) strategy for sparse data like `steps`. This ensures the best model is used for each data type. I also addressed a `ValueError: cannot reindex on an axis with duplicate labels` by grouping raw data by timestamp and averaging the values before processing.
+
+### Monitoring & Alerting Pipeline
+
+**Challenge:**  
+After setting up the full monitoring stack, alerts were not firing as expected.
+
+**Solution:**  
+I debugged the entire data flow, from metric generation to rule evaluation. I used the Prometheus UI to discover that the backend was DOWN due to an incorrect port in the scrape configuration (`8001` vs. the correct internal port `8000`). After fixing this, I tested the alert expression directly and found that the `rate()` function was not ideal for validation. The final solution was to implement a simpler and more reliable alert using the `increase()` function, which correctly triggered the alert pipeline.

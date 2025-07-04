@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# TEMPORARY: This line helps force cache rebuild on every build (remove later)
 RUN echo "FORCE_BACKEND_BUILD_$(date +%s)"
 
 # Copy pyproject.toml and poetry.lock from the build context root
@@ -28,5 +27,5 @@ EXPOSE 8000
 
 # Command to run the FastAPI application
 # app:app refers to 'app.py' file which is in 'backend/' subfolder of the mounted /app
-# --host 0.0.0.0 makes it accessible from outside the container
+# host 0.0.0.0 makes it accessible from outside the container
 CMD ["/usr/local/bin/poetry", "run", "uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,4 +1,4 @@
-const backendBaseUrl = 'http://localhost:8001'; // Your FastAPI backend URL
+const backendBaseUrl = 'http://localhost:8001'; // FastAPI backend URL
 
 let myChart; // Variable to hold the Chart.js instance
 

@@ -52,7 +52,7 @@ services:
       timescaledb:
         condition: service_healthy
     volumes:
-      - ./:/app # Mount the entire project root to /app (for backend code, pyproject.toml etc.)
+      - ./:/app # Mount the entire project root to /app
 
   frontend_app:
     build:
@@ -78,7 +78,7 @@ services:
       - grafana_data:/var/lib/grafana
     depends_on:
       - timescaledb
-# --- Monitoring Stack ---
+# Monitoring Stack
 
   prometheus:
     image: prom/prometheus:latest
